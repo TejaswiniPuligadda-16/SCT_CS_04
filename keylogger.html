@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Keylogger Simulation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin-bottom: 20px;
+        }
+        #keyInput {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #keyInput:focus {
+            border-color: #9b59b6;
+            outline: none;
+        }
+        .log-area {
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            background-color: #fafafa;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            flex: 1;
+        }
+        #clearBtn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        #clearBtn:hover {
+            background-color: #c0392b;
+        }
+        #saveBtn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        #saveBtn:hover {
+            background-color: #27ae60;
+        }
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: center;
+            padding: 10px;
+            background-color: #fff8e1;
+            border-radius: 4px;
+        }
+        
+        /* Color coding for different key types */
+        .log-entry {
+            margin-bottom: 4px;
+        }
+        .normal-key {
+            color: #3498db;
+        }
+        .special-key {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .modifier-key {
+            color: #9b59b6;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .whitespace-key {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Colorful Keylogger Simulation</h1>
+        <div class="input-area">
+            <p>Type in this area to simulate keylogging:</p>
+            <input type="text" id="keyInput" placeholder="Start typing here...">
+        </div>
+        <div class="log-area" id="logArea">
+            Keystroke log will appear here...
+        </div>
+        <div class="controls">
+            <button id="clearBtn">Clear Log</button>
+            <button id="saveBtn">Save Log</button>
+        </div>
+    </div>
+    <p class="disclaimer">
+        Note: This is a simulation for demonstration purposes only. 
+        A real keylogger would require proper permissions and server-side functionality.
+    </p>
+
+    <script>
+        const keyInput = document.getElementById('keyInput');
+        const logArea = document.getElementById('logArea');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        
+        let logContent = [];
+        
+        keyInput.addEventListener('keydown', (e) => {
+            const key = e.key;
+            const timestamp = new Date().toLocaleTimeString();
+            
+            // Determine key type and styling
+            let displayKey = key;
+            let keyClass = 'normal-key';
+            
+            if (key === ' ') {
+                displayKey = '[Space]';
+                keyClass = 'whitespace-key';
+            } 
+            else if (key === 'Enter') {
+                displayKey = '[Enter]';
+                keyClass = 'special-key';
+            }
+            else if (key === 'Tab') {
+                displayKey = '[Tab]';
+                keyClass = 'special-key';
+            }
+            else if (key === 'Escape') {
+                displayKey = '[Esc]';
+                keyClass = 'special-key';
+            }
+            else if (key === 'Backspace') {
+                displayKey = '[Backspace]';
+                keyClass = 'special-key';
+            }
+            else if (key === 'Control' || key === 'Shift' || key === 'Alt' || key === 'Meta') {
+                displayKey = `[${key}]`;
+                keyClass = 'modifier-key';
+            }
+            else if (key === 'CapsLock') {
+                displayKey = '[CapsLock]';
+                keyClass = 'modifier-key';
+            }
+            else if (key.length > 1) {  // Other special keys
+                displayKey = `[${key}]`;
+                keyClass = 'special-key';
+            }
+            
+            const logEntry = `
+                <div class="log-entry">
+                    <span class="timestamp">${timestamp}</span> - 
+                    <span class="${keyClass}">${displayKey}</span>
+                </div>
+            `;
+            
+            logContent.push(logEntry);
+            updateLogDisplay();
+        });
+        
+        function updateLogDisplay() {
+            logArea.innerHTML = logContent.join('');
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        clearBtn.addEventListener('click', () => {
+            logContent = [];
+            logArea.innerHTML = '<div class="log-entry"><span class="timestamp">Log cleared</span></div>';
+        });
+        
+        saveBtn.addEventListener('click', () => {
+            // Extract text content from HTML logs
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = logContent.join('');
+            const textContent = tempDiv.textContent || tempDiv.innerText || '';
+            
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'keystroke_log.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Log saved as keystroke_log.txt');
+        });
+    </script>
+</body>
+</html>
